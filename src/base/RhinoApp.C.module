@@ -1,0 +1,47 @@
+#include "RhinoApp.h"
+#include "Moose.h"
+#include "AppFactory.h"
+#include "MooseSyntax.h"
+
+template<>
+InputParameters validParams<RhinoApp>()
+{
+  InputParameters params = validParams<MooseApp>();
+  return params;
+}
+
+RhinoApp::RhinoApp(InputParameters parameters) :
+    MooseApp(parameters)
+{
+  Moose::registerObjects(_factory);
+  RhinoApp::registerObjects(_factory);
+
+  Moose::associateSyntax(_syntax, _action_factory);
+  RhinoApp::associateSyntax(_syntax, _action_factory);
+}
+
+RhinoApp::~RhinoApp()
+{
+}
+
+// External entry point for dynamic application loading
+extern "C" void RhinoApp__registerApps() { RhinoApp::registerApps(); }
+void
+RhinoApp::registerApps()
+{
+  registerApp(RhinoApp);
+}
+
+// External entry point for dynamic object registration
+extern "C" void RhinoApp__registerObjects(Factory & factory) { RhinoApp::registerObjects(factory); }
+void
+RhinoApp::registerObjects(Factory & /*factory*/)
+{
+}
+
+// External entry point for dynamic syntax association
+extern "C" void RhinoApp__associateSyntax(Syntax & syntax, ActionFactory & action_factory) { RhinoApp::associateSyntax(syntax, action_factory); }
+void
+RhinoApp::associateSyntax(Syntax & /*syntax*/, ActionFactory & /*action_factory*/)
+{
+}
